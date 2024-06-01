@@ -1,5 +1,12 @@
-import { pgTable, serial, varchar, uuid, timestamp } from "drizzle-orm/pg-core";
-import { InferModel } from "drizzle-orm";
+import {
+  pgTable,
+  serial,
+  varchar,
+  uuid,
+  timestamp,
+  date,
+} from "drizzle-orm/pg-core";
+import { InferModel, relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -22,12 +29,28 @@ export const employees = pgTable("employees", {
 
 export const attendance = pgTable("attendance", {
   id: uuid("id").defaultRandom().primaryKey(),
+  date: date("date").notNull(),
   employee_id: uuid("employee_id")
     .notNull()
     .references(() => employees.id),
   timestamp: timestamp("timestamp").notNull(),
   photo_url: varchar("photo_url").notNull(),
 });
+
+export const employeeRelations = relations(employees, ({ many, one }) => ({
+  attendances: many(attendance),
+  user: one(users, {
+    fields: [employees.user_id],
+    references: [users.id],
+  }),
+}));
+
+export const attendanceRelations = relations(attendance, ({ one }) => ({
+  employee: one(employees, {
+    fields: [attendance.employee_id],
+    references: [employees.id],
+  }),
+}));
 
 export type Employee = InferModel<typeof employees>;
 export type Attendance = InferModel<typeof attendance>;

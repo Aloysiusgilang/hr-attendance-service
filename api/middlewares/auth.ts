@@ -24,7 +24,7 @@ export const authenticate = async (
 
     const { userId } = verifyToken(token);
 
-    const [user] = await getUserByUserId(userId, token);
+    const user = await getUserByUserId(userId, token);
 
     // Check if the user exists
     if (!user) {
@@ -37,7 +37,7 @@ export const authenticate = async (
     // If the token is valid, proceed to the next middleware or route handler
     next();
   } catch (error) {
-    // console.error("Error authenticating token:", error);
+    console.error("Error authenticating token:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

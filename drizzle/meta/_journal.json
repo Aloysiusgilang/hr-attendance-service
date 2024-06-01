@@ -15,6 +15,20 @@
       "when": 1717225193243,
       "tag": "0001_huge_peter_quill",
       "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1717234949984,
+      "tag": "0002_friendly_nicolaos",
+      "breakpoints": false
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1717236016574,
+      "tag": "0003_icy_saracen",
+      "breakpoints": false
     }
   ]
 }
