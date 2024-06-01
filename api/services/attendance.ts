@@ -32,11 +32,13 @@ export const getAllAttendances = async () => {
   return attendances;
 };
 
-export const createAttendance = async (attendanceData: any) => {
+export const createAttendance = async (attendanceData: any, url: any) => {
   const [result] = await db
     .insert(attendance)
-    .values(attendanceData)
+    .values({ ...attendanceData, photo_url: url })
     .returning();
+
+  console.log(result);
 
   return result;
 };

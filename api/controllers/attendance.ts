@@ -5,6 +5,8 @@ import {
   getAllAttendances,
   createAttendance,
 } from "../services/attendance";
+import gcs from "../utils/storage";
+import { v4 as uuidv4 } from "uuid";
 
 export const handleGetAllAttendanceByEmployeeId = async (
   req: Request,
@@ -42,10 +44,41 @@ export const handleGetallAttendances = async (req: Request, res: Response) => {
 export const handleCreateAttendance = async (req: Request, res: Response) => {
   try {
     const body = req.body;
+    const file = req.file;
 
-    const newAttendance = await createAttendance(body);
+    if (!file) {
+      return res.status(400).json({ message: "file is required" });
+    }
+
+    // change to Date object if its not a Date object yet
+    if (!(body.date instanceof Date)) {
+      body.date = new Date(body.date);
+      body.timestamp = new Date(body.timestamp);
+    }
+
+    // upload file to GCS
+    const bucket = gcs;
+    const fileData = file;
+    const fileName = uuidv4();
+    const publicUrl = `https://storage.googleapis.com/hr-webapp/${fileName}`;
+
+    const blob = bucket.file(fileName);
+    const blobStream = blob.createWriteStream();
+
+    blobStream.on("error", (err) => {
+      res.status(500).json({ message: err });
+    });
+
+    blobStream.on("finish", () => {
+      console.log("finish upload");
+    });
+
+    blobStream.end(fileData.buffer);
+
+    const newAttendance = await createAttendance(body, publicUrl);
     res.status(200).json(newAttendance);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error });
   }
 };

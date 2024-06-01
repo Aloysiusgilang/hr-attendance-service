@@ -6,6 +6,7 @@ import {
   handleGetallAttendances,
 } from "./controllers/attendance";
 import { authenticate } from "./middlewares/auth";
+import { file } from "./middlewares/upload";
 
 function createRouter(callback: (router: Router) => void) {
   const router = Router();
@@ -17,5 +18,5 @@ export default createRouter((router: Router) => {
   router.get("/attendance", handleGetallAttendances);
   router.get("/attendance/:id", authenticate, handleGetAttendanceById);
   router.get("/employee/:id", authenticate, handleGetAllAttendanceByEmployeeId);
-  router.post("/attendance", authenticate, handleCreateAttendance);
+  router.post("/attendance", file, authenticate, handleCreateAttendance);
 });
