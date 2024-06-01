@@ -47,7 +47,7 @@ export const handleCreateAttendance = async (req: Request, res: Response) => {
     const file = req.file;
 
     if (!file) {
-      return res.status(400).json({ message: "file is required" });
+      throw new Error("File is required");
     }
 
     // change to Date object if its not a Date object yet
@@ -66,7 +66,7 @@ export const handleCreateAttendance = async (req: Request, res: Response) => {
     const blobStream = blob.createWriteStream();
 
     blobStream.on("error", (err) => {
-      res.status(500).json({ message: err });
+      console.log(err);
     });
 
     blobStream.on("finish", () => {
