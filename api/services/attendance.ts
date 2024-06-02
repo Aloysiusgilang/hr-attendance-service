@@ -3,12 +3,12 @@ import db from "../db";
 import { attendance } from "../schema";
 
 export const getAllAttendanceByEmployeeId = async (employeeId: string) => {
-  const result = await db
-    .select()
-    .from(attendance)
-    .where(eq(attendance.employee_id, employeeId))
-    .orderBy(desc(attendance.date));
-
+  const result = await db.query.attendance.findMany({
+    where: eq(attendance.employee_id, employeeId),
+    with: {
+      employee: true,
+    },
+  });
   return result;
 };
 
@@ -24,10 +24,15 @@ export const getAttendanceById = async (attendanceId: string) => {
 };
 
 export const getAllAttendances = async () => {
-  const attendances = await db
-    .select()
-    .from(attendance)
-    .orderBy(desc(attendance.date));
+  // const attendances = await db
+  //   .select()
+  //   .from(attendance)
+  //   .orderBy(desc(attendance.date));
+  const attendances = await db.query.attendance.findMany({
+    with: {
+      employee: true,
+    },
+  });
 
   return attendances;
 };
